@@ -1,0 +1,29 @@
+Complete the following tutorial - 
+1. rosrun turtlesim turtlesim_node
+	- runs a single node
+
+2. See the list of active nodes and topics
+	- rosnode list
+	- rostopic list
+
+3. See info about a particular node or topic
+	- rosnode info /turtlesim
+	- rostopic info /turtle1/cmd_vel
+
+4. rqt
+	- To publish to a topic graphically (publish to /turtle1/cmd_vel to see the turtle move)
+	- Later write code to publish manually to a topic
+
+5. rosrun rqt_graph rqt_graph 
+	- To visualize how all the nodes and topics interact with each other.
+
+6. rostopic echo /turtle1/cmd_vel
+	- See topic messages realtime (while you publish using rqt)
+
+7. rosmsg show geometry_msgs/Twist
+	- To see the type of each message sent by rqt.
+	- Its possible to make your own message type as well. 
+
+
+References: 
+1. http://www.fer.unizg.hr/_download/repository/p03-ros-uvod%5B1%5D.pdf

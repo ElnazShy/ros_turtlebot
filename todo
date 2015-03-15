@@ -1,0 +1,46 @@
+Todo:
+=====
+
+High Priority
+--------------
+
+Make a very basic tutorial to explain the simplest working of ROS. DONE
+	- Read /doc/Tutorial 1
+
+Make a standalone independent collection of packages for any future robot simulation. DONE
+	- Everything in /code/src
+
+Learn how to make a custom world. DONE. 
+	- See /code/src/turtlebot_gazebo/worlds/custom_corridorV1.world DONE.
+	- How to make a custom world in stage. TODO
+
+Make simple movements open loop. DONE
+	- See /code/turtlebot_gazebo/scripts/objective1
+
+Make a simple movement template based on a closed loop. DONE
+	- Use Actionlib to enforce a goal oriented server-client architecture. DONE
+	- See motor encoders for more eact movements. TODO
+
+Implement FSMs using http://wiki.ros.org/smach. TODO
+	- Make a model from Dr. Fu's code first. TODO
+	- Choose Datastructure. TODO
+
+Low Priority
+------------
+Finish the Getting Started with ROS Part 2 documentation.
+
+Make a single .launch file to start everything from gazebo, actionlib server, navigation stack, rviz and tf. 
+
+
+Doubts: 
+=======
+
+Get the current architecture evaluated. 
+	- Decide on SLAM or simple FSMs
+	- Dr. Fu's code implementation still seeing.
+
+
+
+
+
+

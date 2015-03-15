@@ -1,0 +1,171 @@
+Getting Started with ROS
+========================
+
+
+ROS
+
+ROS is a packaged set of libaries and tools to create and simulate robotic applications. The major idea is to make a piece of software thats portable to other platforms (hardware, OS). The beauty of ROs is the massive collection of packages which are contributed by people all over the world. 
+
+The aim of this tutorial is to get a package of ROS ready for simulation and make a basic template for grid navigation. 
+
+Installation 
+------------
+The system used for development gave the following output on 'uname -a'
+Linux liuc 3.13.0-37-generic #64-Ubuntu SMP Mon Sep 22 21:28:38 UTC 2014 x86_64 x86_64 x86_64 GNU/Linux
+
+1. Install the latest version of ros (indigo in my case)
+http://wiki.ros.org/indigo/Installation/Ubuntu
+
+I did a full desktop installation - Also Indigo uses Gazebo 2 which is 
+the default version of Gazebo on Trusty and is recommended. 
+
+A full installation occurs in /opt/ros/indigo/.
+
+Run the following commands to add the path to your environment,
+```
+echo "source /opt/ros/indigo/setup.bash" >> ~/.bashrc
+source ~/.bashrc
+```
+
+2. Install rosdep to manage dependencies of packages. 
+```
+sudo apt-get install python-rosdep
+```
+To update the packages run the following, 
+```
+sudo rosdep init # Call once only
+rosdep update
+```
+
+3. rosinstall - rosinstall is to install and maintain ros packages from online sources into workspaces. It enables you to easily download many source trees for ROS packages with one command.
+
+""Note - rosws package has been incorporated into rosinstall. Don't follow any tutorial with rosws. ""
+
+```
+sudo apt-get install python-rosinstall
+```
+
+
+ROS Architecture (http://wiki.ros.org/ROS/Concepts)
+----------------
+Three basic sections
+	Filesystem - How the various files in ROS come together to make it work
+	Computation Graph Level - How the various processes and systems of ROS interact with each other.
+	Community Level - how packages and libraries of others can be used to build on
+
+
+Filesystem
+----------
+The installation as described above installs into in the /opt/ros/indigo/ directory.
+
+NOTE THAT ROS FOLLOWS A FHS COMPLIANT STRUCTURES
+```
+/usr/bin, used for binaries
+/usr/etc, used for system-wide configuration files
+/usr/games
+/usr/include, used for C header files
+/usr/kerberos, used for Kerberos-related binaries and files
+/usr/lib, used for object files and libraries that are not designed to be directly utilized by shell scripts or users - final executables in packages -- see /opt/ros/indigo/
+/usr/libexec, contains small helper programs called by other programs
+/usr/sbin, stores system administration binaries that do not belong to /sbin/
+/usr/share, stores files that are not architecture-specific
+/usr/src, stores source code
+/usr/tmp -> /var/tmp
+```
+
+Quick Overview of Filesystem Concepts (http://wiki.ros.org/ROS/Tutorials/rosbuild/NavigatingTheFilesystem)
+-------------------------------------
+Packages: Packages are the software organization unit of ROS code. Each package can contain libraries, executables, scripts, or other artifacts.
+Manifest (package.xml): A manifest is a description of a package. Its serves to define dependencies between packages and to capture meta information about the package like version, maintainer, license, etc...
+Stacks: Stacks are collections of packages that form a higher-level library. Stacks are used to share code. 
+Stack Manifest: These are just like normal manifests, but for stacks.
+
+Note: The latest version of ROS (indigo) doesn't have stacks but instead a collection of packages is called a metapackage and each package (and metapackage) has its own package.xml file. 
+
+List of essential ROS Packages for navigation in the file system/packages (http://wiki.ros.org/ROS/Tutorials/NavigatingTheFilesystem) - roscd, rosls, rospack(ros+package) find <ros_package_name>
+
+try for example running
+```
+rospack find stage 
+rosls gazebo_ros
+roscd gazebo_ros
+``
+
+Maintaining a workspace/Building packages
+Catkin is the build system (http://www.cs.virginia.edu/~dww4s/articles/build_systems.html & http://wiki.ros.org/catkin/conceptual_overview) used for developing, compiling and distributing packages.Workspaces are where packages are built. 
+
+Recommended readings,  
+1. http://wiki.ros.org/catkin/workspaces.
+2. http://wiki.ros.org/catkin/Tutorials/using_a_workspace
+3. http://wiki.ros.org/catkin/Tutorials
+
+A typical workflow including creating Catkin Workspace looks like this,
+```
+mkdir -p ~/catkin/ws1/src
+cd ./catkin/ws1/src
+catkin_init_workspace # run inside /src
+# Add any source files you want to make packages
+# Update CMakeFiles.txt to reflect any changes to your sources
+catkin_make in the /ws1 (workspace root folder)  # creates build, devel
+. ~/catkin/ws1/devel/setup.bash
+cd ~/catkin/ws1/build/ # needs a review 
+cmake ../src/ -DCMAKE_INSTALL_PREFIX=../install # needs a review
+
+Build all the file structure and the final executables in the install directory
+	make install
+To clean up in the end 
+	cd ~/catkin/ws1/
+	rm -rf build devel install
+```
+
+Note: Catkin is just the folder which contains all our workspaces, ws1 refers to workspace 1 and so on.
+
+
+
+ROS Computation Graph Level
+---------------------------
+
+Important concepts include, 
+Node - Any process in ROS is a node.
+How do nodes communicate ? 
+	1. Messages - DS for message communication
+	2. Topics - Many-to-Many architecture
+	3. Services - One-to-one architecture
+
+Must read - http://wiki.ros.org/ROS/Patterns/Communication 
+Communicating via topics is most common among node - http://wiki.ros.org/ROS/Tutorials/WritingPublisherSubscriber%28python%29
+
+roscore is the master responsible for having everything work together. The ROS Master acts as a nameservice in the ROS Computation Graph. It stores topics and services registration information for ROS nodes. Nodes communicate with the Master to report their registration information. As these nodes communicate with the Master, they can receive information about other registered nodes and make connections as appropriate. The Master will also make callbacks to these nodes when this registration information changes, which allows nodes to dynamically create connections as new nodes are run.
+
+Make sure to get experience with commands like,
+rosnode list
+rosnode info 
+
+rosrun is used to execute a node of a package, the following is its syntax, 
+rosrun <package-name> <executable-name>
+For example, rosrun turtlesim turtlesim_node will execute the executable turtlesim_node inside the turtlesim package. To see what executables are inside a given package just hit tab a couple of times after typing the package name. 
+
+When using your own packages in your custom workspace, be sure to verify the location of the package by - rospack find <package-name> to be sure of the package you would be calling when running rosrun. If rospack find <package-name> points to the /opt/ros/indigo directory make sure you source the location of your workspace by running - source ./devel/setup.bash after running catkin_make in your source folder. 
+
+To avoid running various nodes in different terminals, .launch files are created to create and run different nodes simulateneously.
+
+rosrun is to start a single node, roslaunch is to start a group of nodes. Used to start the master node and other nodes using a simple file rather than through different files. 
+
+Basic idea - to list the group of nodes that need to be started simulatneously in xml format.
+
+launch files are associated with packages and usually end with .launch extension.
+
+<launch> </launch> 
+<node ... /> or <node pkg="" type="" name="" > </node> (use the latter for specifying child nodes)
+
+pkg and type - The pkg and type attributes identify which program ROS should run to start this
+node. These are the same as the two command line arguments to rosrun, specifying the package name and the executable name, respectively. name is the name of the node. 
+
+<arg name="" default="$..."> - arg names are generally used in case you want to specify defaults. Look at /code/src/turtlebot_gazebo/launch/turtlebot_world.launch. See how the default is specified using the environment variables, in our case it defines the .world to be loaded. These environment variables can be changed using commands like - export TURTLEBOT_GAZEBO_WORLD_FILE=/home/cuil/catkin/wsv2/src/turtlebot_gazebo/worlds/custom_corridorV1.world
+
+Reference - http://www.cse.sc.edu/~jokane/agitr/agitr-small-launch.pdf
+
+ROS Community Level
+-------------------
+Look at http://wiki.ros.org/ROS/Concepts as I have nothing to contribute to this.
+

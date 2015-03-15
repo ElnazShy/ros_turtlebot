@@ -1,0 +1,59 @@
+Getting Started with ROS Part 2
+===============================
+
+Note: For the purpose of this project, I would be using python throughout. 
+
+Make sure you have completed the following (in order) before proceeding, 
+1. Tutorial 1 - /doc/Tutorial 1
+2. http://wiki.ros.org/ROS/Tutorials/WritingPublisherSubscriber%28python%29
+3. http://wiki.ros.org/ROS/Tutorials/WritingServiceClient%28python%29
+
+After a certain sense of similarity with the ROS architecture, looking at the Project Objective (/doc/Project Objective) the following are the immediate questions that come to mind. 
+1. Which Robot ? How to define a robot ? How to work with existing turtlebot robot definitions.
+2. Which Simulation Environment ? 2d ? 3d ? 
+3. How to navigate a robot ? Deal with known/unknown worlds ? 
+4. How to make a custom world and put real world objects (book shelfs, walls, etc) in them ? 
+
+This part 2 of the doc answers all the above questions,
+
+Which Robot ? How to define a robot ? How to work with existing turtlebot robot definitions.
+--------------------------------------------------------------------------------------------
+Robots in ROS are generally defined using a URDF file. A URDF specification defines the links and the joints in a robot. 
+
+To make a custom robot - its necessary to write your own URDF file. For the purpose of this project, we decided on using turtlebot as our robot and robot definitions for this already are packaged in the turtlebot_* packages included in /code/src/* folders. 
+
+See - http://wiki.ros.org/urdf/Tutorials
+
+Which Simulation Environment ? 2d ? 3d ? 
+----------------------------------------
+There are a variety of simulation environments out there which can be used to simulate 2d/3d. Some of the most popular ones include stage, gazebo and stdr. 
+
+http://wiki.ros.org/stage
+http://wiki.ros.org/gazebo
+http://wiki.ros.org/stdr_simulator
+
+For the purpose of our project, all these packages are already included in the current code at /code/src/turtlebot_stdr (/turtlebot_gazebo, /turtlebot_stage)
+
+How to navigate a robot ? Deal with known/unknown worlds ?
+----------------------------------------------------------
+A navigation stack is used to move a robot. A navigation stack takes in as input the state of the robot sensors, odometry to control the movement of the robot. 
+
+The Transformation Frame, TF is used to publish the frame location of the various joints and sensors of the robot. A tool called RVIZ is used to visualize these transformation. Its possible to run rviz on our project by executing - roslaunch turtlebot_rviz_launchers view_navigation.launch (possible to execute other .
+
+To make sure that navigation is accurate, its necessary to have a closed loop, its neccessary to implement a client-server architecture for such a communication where the client tells the server what kind of motion is required and the server uses the navigation stack (including the information from the sensors and the odometry) to execute the motion using closed loop with these parameters. ROS has a package actionlib (http://wiki.ros.org/actionlib) which makes for such a client-server architecture. See http://wiki.ros.org/actionlib/Tutorials. 
+
+Known Environments
+++++++++++++++++++
+In a known environment, its easy to run a model, since you exactly know the position of the robot and can see and safely tell the robot to execute a certain motion. 
+
+Unknown Environments
+++++++++++++++++++++
+In an unknown environment, the robot needs to run localization algorithms to judge its current position and also map its environment - this is called SLAM (Simultaneous localization and mapping).
+
+The ROS navigation stack also includes some default localization algorithms for environments which are unknown. gmapping (http://wiki.ros.org/gmapping) is a SLAM package, a demo is included in our project under /code/src/turtlebot_navigation/launch/gmapping_demo.launch.
+
+In our project the navigation stack is completely included in the /code/src/turtlebot_navigation folder. 
+
+
+How to make a custom world and put real world objects (book shelfs, walls, etc) in them ? 
+-----------------------------------------------------------------------------------------
